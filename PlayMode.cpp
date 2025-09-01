@@ -1,4 +1,4 @@
-#include "PlayMode.hpp"
+	#include "PlayMode.hpp"
 
 //for the GL_ERRORS() macro:
 #include "gl_errors.hpp"
@@ -6,7 +6,25 @@
 //for glm::value_ptr() :
 #include <glm/gtc/type_ptr.hpp>
 
+#include "data_path.hpp"
+
+#include "Sprite.hpp"
+
+#include"Load.hpp"
+
+#include<string>
+
 #include <random>
+
+
+Sprite const *loadedSprite = nullptr;
+
+Load<Sprite> crabmanFacePng(LoadTagEarly, []() {
+	loadedSprite = Sprites::load("crabmanFace.png");
+	return loadedSprite;
+});
+
+//Sprite const &crabman_sprite = sprites.lookup("crabman_sprite");
 
 PlayMode::PlayMode() {
 	//TODO:
@@ -49,26 +67,8 @@ PlayMode::PlayMode() {
 	}
 
 	//use sprite 32 as a "player":
-	ppu.tile_table[32].bit0 = {
-		0b01111110,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b11111111,
-		0b01111110,
-	};
-	ppu.tile_table[32].bit1 = {
-		0b00000000,
-		0b00000000,
-		0b00011000,
-		0b00100100,
-		0b00000000,
-		0b00100100,
-		0b00000000,
-		0b00000000,
-	};
+	ppu.tile_table[32].bit0 = loadedSprite->tile.bit0;
+	ppu.tile_table[32].bit1 = loadedSprite->tile.bit1;
 
 	//makes the outside of tiles 0-16 solid:
 	ppu.palette_table[0] = {
@@ -87,12 +87,7 @@ PlayMode::PlayMode() {
 	};
 
 	//used for the player:
-	ppu.palette_table[7] = {
-		glm::u8vec4(0x00, 0x00, 0x00, 0x00),
-		glm::u8vec4(0xff, 0xff, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-		glm::u8vec4(0x00, 0x00, 0x00, 0xff),
-	};
+	ppu.palette_table[7] = loadedSprite->palette;
 
 	//used for the misc other sprites:
 	ppu.palette_table[6] = {
@@ -150,8 +145,8 @@ void PlayMode::update(float elapsed) {
 
 	//slowly rotates through [0,1):
 	// (will be used to set background color)
-	background_fade += elapsed / 10.0f;
-	background_fade -= std::floor(background_fade);
+	//background_fade += elapsed / 10.0f;
+	//background_fade -= std::floor(background_fade);
 
 	constexpr float PlayerSpeed = 30.0f;
 	if (left.pressed) player_at.x -= PlayerSpeed * elapsed;
@@ -195,6 +190,8 @@ void PlayMode::draw(glm::uvec2 const &drawable_size) {
 	ppu.sprites[0].y = int8_t(player_at.y);
 	ppu.sprites[0].index = 32;
 	ppu.sprites[0].attributes = 7;
+
+
 
 	//some other misc sprites:
 	for (uint32_t i = 1; i < 63; ++i) {

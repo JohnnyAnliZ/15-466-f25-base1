@@ -1,6 +1,7 @@
 #include "Load.hpp"
 
 #include <array>
+#include <iostream>
 #include <list>
 #include <cassert>
 
@@ -25,6 +26,7 @@ void call_load_functions() {
 	auto &load_lists = get_load_lists();
 	for (auto &fn_list : load_lists) {
 		while (!fn_list.empty()) {
+			std::cout << "popping" << std::endl;	
 			(*fn_list.begin())(); //call first function in the list
 			fn_list.pop_front(); //remove from list
 		}
