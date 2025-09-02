@@ -26,9 +26,46 @@ struct PlayMode : Mode {
 	//some weird background animation:
 	float background_fade = 0.0f;
 
-	//player position:
-	glm::vec2 player_at = glm::vec2(0.0f);
 
+
+	//-------ANIMATION-----------
+
+
+	//crabman facing
+	bool facingLeft = false;
+
+	//used for frame-wise animation
+	uint32_t frame = 0;
+	bool standing = true;
+	bool justIdle = true;
+
+	//--------MECHANICS-----------
+	//Falling
+	bool falling = false;
+
+	//player position:
+	glm::vec2 player_at = glm::vec2(8.0f,70.0f);
+	float clawY = 0.0f;
+
+	//checkFalling
+	bool playerInAir();
+	void snapGround();
+
+
+
+	//Hooking
+	bool hooking = false;
+	bool hooked = false;
+	//climbed to the hook
+	bool top = false;
+	//check clawReaching;
+	bool clawTouched();
+	void snapClaw();
+
+	bool headTouched();
+	void snapCeiling();
+
+	float hookingTime;
 	//----- drawing handled by PPU466 -----
 
 	PPU466 ppu;

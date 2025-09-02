@@ -98,6 +98,7 @@ struct PPU466 {
 	// thus, background_position values of (x,y) and of (x+n*512,y+m*480) for
 	// any integers n,m will look the same
 
+
 	//Sprite:
 	// On the PPU, all non-background objects are called 'sprites':
 	//
